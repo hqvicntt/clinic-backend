@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
+use App\Models\Doctor;
 
 class AppointmentController extends Controller
 {
@@ -53,5 +54,18 @@ class AppointmentController extends Controller
             'message' => 'Cập nhật trạng thái lịch hẹn thành công!',
             'data' => $appointment
         ]);
+    }
+
+    public function getDoctors()
+    {
+        $doctors = Doctor::with('specialty')
+            ->where('is_active', true)
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Lấy danh sách bác sĩ thành công!',
+            'data' => $doctors
+        ], 200);
     }
 }
