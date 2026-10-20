@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Specialty extends Model
+{
+    // Mass Assignable Attributes
+    protected $fillable = ['name', 'description'];
+
+    // Relationship (HasMany)
+    public function doctors(): HasMany
+    {
+        return $this->hasMany(Doctor::class);
+    }
+}
