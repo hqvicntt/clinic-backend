@@ -36,14 +36,19 @@ class AppointmentController extends Controller
         ], 201);
     }
 
-    public function getPatientAppointments($userId)
+    public function getPatientAppointments(Request $request)
     {
+        $userId = $request->user()->id;
+
         $appointments = Appointment::with('doctor')
             ->where('user_id', $userId)
             ->orderBy('appointment_date', 'desc')
             ->get();
 
-        return response()->json($appointments);
+        return response()->json([
+            'status' => 'success',
+            'data' => $appointments
+        ], 200);
     }
 
     public function updateStatus(Request $request, $id)
@@ -54,12 +59,15 @@ class AppointmentController extends Controller
         ]);
 
         $appointment = Appointment::findOrFail($id);
-        $appointment->update($request->only(['status', 'cancellation_reason']));
+        $appointment->update([
+            'status' => $request->status,
+            'cancellation_reason' => $request->status === 'cancelled' ? $request->cancellation_reason : null
+        ]);
 
         return response()->json([
             'message' => 'Cập nhật trạng thái lịch hẹn thành công!',
             'data' => $appointment
-        ]);
+        ], 200);
     }
 
     public function getDoctors()
