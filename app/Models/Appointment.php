@@ -28,4 +28,16 @@ class Appointment extends Model
     {
         return $this->belongsTo(Doctor::class, 'doctor_id');
     }
+
+    public function medicalRecord()
+    {
+        return $this->hasOne(MedicalRecord::class);
+    }
+
+    public function medicines()
+    {
+        return $this->belongsToMany(Medicine::class, 'appointment_medicine')
+            ->withPivot('dosage')
+            ->withTimestamps();
+    }
 }
