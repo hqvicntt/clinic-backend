@@ -82,4 +82,35 @@ class AppointmentController extends Controller
             'data' => $doctors
         ], 200);
     }
+
+    public function cancel(Request $request, $id)
+    {
+        $appointment = Appointment::where('id', $id)
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        if (!$appointment) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không tìm thấy lịch hẹn hoặc bạn không có quyền hủy!'
+            ], 404);
+        }
+
+        if (!in_array($appointment->status, ['pending', 'approved'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không thể hủy lịch hẹn đã hoàn thành hoặc đã hủy trước đó!'
+            ], 400);
+        }
+
+        $appointment->update([
+            'status' => 'cancelled',
+            'cancellation_reason' => $request->input('reason', 'Bệnh nhân chủ động hủy lịch qua ứng dụng di động.'),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Đã hủy lịch hẹn thành công!'
+        ], 200);
+    }
 }
