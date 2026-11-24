@@ -100,6 +100,53 @@
                                                     <button type="submit" class="btn btn-sm btn-outline-danger fw-semibold px-3">Hủy</button>
                                                 </form>
                                             </div>
+                                        @elseif($appointment->status === 'approved')
+                                            <button type="button" class="btn btn-sm btn-primary fw-semibold px-3" data-bs-toggle="modal" data-bs-target="#completeModal{{ $appointment->id }}">
+                                                Hoàn thành & Kê đơn
+                                            </button>
+
+                                            <div class="modal fade" id="completeModal{{ $appointment->id }}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg">
+                                                    <form action="{{ route('admin.appointments.complete', $appointment->id) }}" method="POST" class="modal-content">
+                                                        @csrf
+                                                        <div class="modal-header bg-primary text-white">
+                                                            <h5 class="modal-title fw-bold">Kết quả khám & Kê đơn - BN: {{ $appointment->user->name }}</h5>
+                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body text-start">
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-bold">Chẩn đoán bệnh *</label>
+                                                                <textarea name="diagnosis" class="form-control" rows="2" required placeholder="Ví dụ: Viêm họng cấp tính..."></textarea>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-bold">Lời dặn của bác sĩ</label>
+                                                                <textarea name="doctor_notes" class="form-control" rows="2" placeholder="Ví dụ: Uống nhiều nước ấm, tái khám sau 5 ngày..."></textarea>
+                                                            </div>
+                                                            <hr>
+                                                            <label class="form-label fw-bold text-primary mb-2">Chọn thuốc kê đơn & Liều dùng:</label>
+                                                            @foreach($medicines as $med)
+                                                                <div class="row align-items-center mb-2 border-bottom pb-2">
+                                                                    <div class="col-md-5">
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input" type="checkbox" name="medicines[{{ $med->id }}][selected]" value="1" id="med{{ $appointment->id }}_{{ $med->id }}">
+                                                                            <label class="form-check-label fw-semibold" for="med{{ $appointment->id }}_{{ $med->id }}">
+                                                                                {{ $med->name }} ({{ $med->dosage_form }})
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-7">
+                                                                        <input type="text" name="medicines[{{ $med->id }}][dosage]" class="form-control form-control-sm" placeholder="Nhập liều dùng (VD: Ngày 2 lần, mỗi lần 1 viên)">
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                            <button type="submit" class="btn btn-success fw-semibold">Lưu bệnh án & Hoàn thành</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         @else
                                             <span class="text-muted fs-7">Không có thao tác</span>
                                         @endif
@@ -117,4 +164,5 @@
         </div>
     </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.9/dist/js/bootstrap.bundle.min.js" integrity="sha384-WyOxWvTyr1QaMPfiPJSv76iReVthorl5uWlFtZPyK0IEB0hGzo9y5Bp9mYanr8Bu" crossorigin="anonymous"></script>
 </html>

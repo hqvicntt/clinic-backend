@@ -7,6 +7,8 @@ use App\Models\Appointment;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\MedicalRecord;
+use App\Models\Medicine;
 
 class AdminController extends Controller
 {
@@ -47,7 +49,9 @@ class AdminController extends Controller
             ->take(5)
             ->get();
 
-        return view('admin.dashboard', compact('totalDoctors', 'totalPending', 'totalApproved', 'recentAppointments'));
+        $medicines = Medicine::all();
+
+        return view('admin.dashboard', compact('totalDoctors', 'totalPending', 'totalApproved', 'recentAppointments', 'medicines'));
     }
 
     public function logout(Request $request)
@@ -74,5 +78,35 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'Đã cập nhật trạng thái lịch hẹn #' . $id . ' thành công!');
+    }
+
+    public function completeAppointment(Request $request, $id)
+    {
+        $request->validate([
+            'diagnosis' => 'required|string',
+            'doctor_notes' => 'nullable|string',
+        ]);
+
+        $appointment = Appointment::findOrFail($id);
+
+        $appointment->update(['status' => 'completed']);
+
+        MedicalRecord::create([
+            'appointment_id' => $appointment->id,
+            'diagnosis' => $request->diagnosis,
+            'doctor_notes' => $request->doctor_notes,
+        ]);
+
+        if ($request->has('medicines')) {
+            foreach ($request->medicines as $medicineId => $data) {
+                if (isset($data['selected'])) {
+                    $appointment->medicines()->attach($medicineId, [
+                        'dosage' => $data['dosage'] ?? 'Uống theo chỉ định của bác sĩ',
+                    ]);
+                }
+            }
+        }
+
+        return back()->with('success', 'Đã hoàn thành ca khám #' . $id . ' và xuất đơn thuốc thành công!');
     }
 }

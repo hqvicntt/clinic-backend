@@ -14,4 +14,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
     Route::post('/admin/appointments/{id}/status', [AdminController::class, 'updateAppointmentStatus'])->name('admin.appointments.update');
+    Route::post('/admin/appointments/{id}/complete', [AdminController::class, 'completeAppointment'])->name('admin.appointments.complete');
 });
