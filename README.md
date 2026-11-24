@@ -1,59 +1,118 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏥 MedCare Hospital - Clinic Management Backend & Web Admin
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A comprehensive RESTful API backend and Web Administration Dashboard built with **Laravel 12** and **MySQL** for the **MedCare Hospital** mobile healthcare application (CT484 - Mobile Application Development Project).
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Key Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🔐 Authentication & Account Management (Laravel Sanctum)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Patient Registration & Login:** Token-based authentication (`Bearer Token`).
+- **Forgot Password via OTP:** Secure 6-digit OTP generation with a 5-minute expiration window (`password_otps`) and password reset workflow.
+- **Profile & Security:** View/update personal profile information and change password with automatic token revocation.
 
-## Learning Laravel
+### 📅 Appointment & Medical Records System
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- **Doctor & Specialty Directory:** Public endpoints to browse doctors filtered by medical specialties.
+- **Appointment Booking & Cancellation:** Patients can book appointments by date/time slot and cancel pending/approved bookings with ownership verification.
+- **Nested Eager Loading:** Single-query retrieval of patient appointments bundled with doctor details, medical diagnosis (`medical_records`), and prescribed medications (`medicines` via pivot table).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🖥️ Web Administration Dashboard (Blade + Bootstrap 5)
 
-## Laravel Sponsors
+- **Role-Based Access Control:** Dedicated admin login portal protected by middleware (`role === 'admin'`).
+- **Appointment Workflow:** Real-time dashboard statistics, approve or cancel incoming patient requests, and complete examinations with a diagnosis & prescription modal.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🛠️ Tech Stack
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- **Framework:** Laravel 12 (PHP 8.2+)
+- **Database:** MySQL 8.0
+- **Authentication:** Laravel Sanctum (API Tokens) & Session Guard (Web Admin)
+- **Frontend (Admin):** Blade Templates, Bootstrap 5.3
+- **Deployment:** Railway Cloud Platform (Auto-deploy via GitHub & `Procfile`)
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🗄️ Database Schema Overview
 
-## Code of Conduct
+- `users`: Stores patient and admin accounts (`id`, `name`, `email`, `password`, `phone`, `role`).
+- `specialties`: Medical departments (`id`, `name`, `description`).
+- `doctors`: Doctor profiles linked to specialties (`id`, `specialty_id`, `name`, `avatar`, `schedule`, `is_active`).
+- `appointments`: Booking records (`id`, `user_id`, `doctor_id`, `appointment_date`, `appointment_time`, `symptoms`, `status`, `cancellation_reason`).
+- `medical_records`: Examination diagnosis and doctor notes (`id`, `appointment_id`, `diagnosis`, `doctor_notes`).
+- `medicines`: Medication catalog (`id`, `name`, `brand`, `description`, `dosage_form`).
+- `appointment_medicine`: Pivot table linking prescriptions and dosages (`appointment_id`, `medicine_id`, `dosage`).
+- `password_otps`: Temporary 6-digit OTP codes for password recovery (`email`, `otp`, `expires_at`).
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 🔌 API Endpoints Reference
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Public Routes
 
-## License
+| Method | Endpoint               | Description                              |
+| :----- | :--------------------- | :--------------------------------------- |
+| `POST` | `/api/register`        | Register a new patient account           |
+| `POST` | `/api/login`           | Authenticate user and issue Bearer token |
+| `POST` | `/api/forgot-password` | Generate 6-digit OTP for password reset  |
+| `POST` | `/api/reset-password`  | Verify OTP and set a new password        |
+| `GET`  | `/api/doctors`         | Get all active doctors with specialties  |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Protected Routes (`Authorization: Bearer <token>`)
+
+| Method | Endpoint                        | Description                                                             |
+| :----- | :------------------------------ | :---------------------------------------------------------------------- |
+| `GET`  | `/api/profile`                  | Retrieve current user profile                                           |
+| `PUT`  | `/api/profile`                  | Update name, email, or phone number                                     |
+| `PUT`  | `/api/change-password`          | Update password and revoke old tokens                                   |
+| `POST` | `/api/appointments`             | Create a new appointment booking                                        |
+| `GET`  | `/api/patient/appointments`     | List patient's appointments with nested medical records & prescriptions |
+| `PUT`  | `/api/appointments/{id}/cancel` | Cancel a pending or approved appointment                                |
+
+---
+
+## 🚀 Local Setup & Installation
+
+1. **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/hqvicntt/clinic-backend
+    cd clinic-backend
+    ```
+
+2. **Install PHP dependencies:**
+
+    ```bash
+    composer install
+    ```
+
+3. **Configure environment variables:**
+
+    ```bash
+    cp .env.example .env
+    php artisan key:generate
+    ```
+
+    Update `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` in `.env` to match your MySQL 8.0 configuration.
+
+4. **Run database migrations and seeders:**
+
+    ```bash
+    php artisan migrate --seed
+    ```
+
+5. **Start the local development server (LAN accessible):**
+    ```bash
+    php artisan serve --host=0.0.0.0 --port=8000
+    ```
+
+    - **API Base URL:** `http://<your-local-ip>:8000/api`
+    - **Web Admin Login URL:** `http://<your-local-ip>:8000/api/admin/login`
+
+---
+
+## 👨‍💻 Author
+
+- **Huỳnh Quang Vĩ** — Backend Architecture, Database Design, RESTful API, Web Admin & Cloud Deployment.
