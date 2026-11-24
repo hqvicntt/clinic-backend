@@ -104,6 +104,7 @@ A comprehensive RESTful API backend and Web Administration Dashboard built with 
     ```
 
 5. **Start the local development server (LAN accessible):**
+
     ```bash
     php artisan serve --host=0.0.0.0 --port=8000
     ```
@@ -115,4 +116,4 @@ A comprehensive RESTful API backend and Web Administration Dashboard built with 
 
 ## 👨‍💻 Author
 
-- **Huỳnh Quang Vĩ** — Backend Architecture, Database Design, RESTful API, Web Admin & Cloud Deployment.
+- **Huynh Quang Vi** — Backend Architecture, Database Design, RESTful API, Web Admin & Cloud Deployment.
