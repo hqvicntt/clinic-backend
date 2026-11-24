@@ -40,7 +40,7 @@ class AppointmentController extends Controller
     {
         $userId = $request->user()->id;
 
-        $appointments = Appointment::with(['doctor', 'medicalRecord.medicines'])
+        $appointments = Appointment::with(['doctor.specialty', 'medicalRecord.medicines'])
             ->where('user_id', $userId)
             ->orderBy('appointment_date', 'desc')
             ->get();
